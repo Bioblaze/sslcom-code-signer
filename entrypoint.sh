@@ -25,6 +25,8 @@ COMMAND="/usr/bin/codesign"
 [ ! -z $INPUT_MALWARE_BLOCK ] && COMMAND="${COMMAND} -malware_block=${INPUT_MALWARE_BLOCK}"
 [ ! -z $INPUT_OVERRIDE ] && COMMAND="${COMMAND} -override=${INPUT_OVERRIDE}"
 
+echo $COMMAND
+
 RESULT=$(bash -c "set -e; $COMMAND 2>&1")
 
 if [[ "$RESULT" =~ .*"Error".* || "$RESULT" =~ .*"Exception".* || "$RESULT" =~ .*"Missing required option".* ||
