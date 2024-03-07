@@ -1,0 +1,56 @@
+name: "codesigner"
+author: "Bioblaze"
+branding:
+  icon: "feather"
+  color: "green"
+description: ""
+inputs:
+  command:
+    description: ""
+    required: true
+    default: "--version"    
+  username:
+    description: ""
+    required: false
+  password:
+    description: ""
+    required: false
+  credential_id:
+    description: ""
+    required: false
+  totp_secret:
+    description: ""
+    required: false
+  program_name:
+    description: ""
+    required: false
+  file_path:
+    description: ""
+    required: false
+  dir_path:
+    description: ""
+    required: false
+  output_path:
+    description: ""
+    required: false
+  malware_block:
+    description: ""
+    required: false
+    default: "false"
+  environment_name:
+    description: ""
+    required: false
+    default: "PROD"
+  override:
+    description: ""
+    required: false
+    default: "false"
+  clean_logs:
+    description: ""
+    required: false
+    default: "false"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.command }}
