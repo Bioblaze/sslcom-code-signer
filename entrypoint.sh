@@ -36,6 +36,8 @@ if [ ! -d "$INPUT_OUTPUT_PATH" ]; then
     mkdir -p "$INPUT_OUTPUT_PATH"
 fi
 
+echo $COMMON_FLAGS
+
 # Handling individual file signing if a directory is specified
 if [ ! -z $INPUT_DIR_PATH ] && [ -d "$INPUT_DIR_PATH" ]; then
     for file in "$INPUT_DIR_PATH"/*; do
