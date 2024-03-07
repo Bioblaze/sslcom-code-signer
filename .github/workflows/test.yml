@@ -116,7 +116,7 @@ jobs:
       - name: Create multiple Input file for test signing
         shell: bash
         run: |
-          mkdir -p ${GITHUB_WORKSPACE}/example
+          mkdir -p ./example
           echo 'Write-Output -InputObject "Happy Signing From ESigner.com for Batch Sign 1!"' > ${GITHUB_WORKSPACE}/example/batch1.ps1
           echo 'Write-Output -InputObject "Happy Signing From ESigner.com for Batch Sign 2!"' > ${GITHUB_WORKSPACE}/example/batch2.ps1
           echo 'Write-Output -InputObject "Happy Signing From ESigner.com for Batch Sign 3!"' > ${GITHUB_WORKSPACE}/example/batch3.ps1
@@ -128,6 +128,6 @@ jobs:
           password: ${{ secrets.ES_PASSWORD }}
           credential_id: ${{ secrets.CREDENTIAL_ID }}
           totp_secret: ${{ secrets.ES_TOTP_SECRET }}
-          dir_path: ${GITHUB_WORKSPACE}/example
-          output_path: ${GITHUB_WORKSPACE}/artifacts
+          dir_path: ./example
+          output_path: ./artifacts
           environment_name: PROD
