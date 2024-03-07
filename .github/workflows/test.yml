@@ -59,6 +59,7 @@ jobs:
           credential_id: ${{secrets.CREDENTIAL_ID}}
           totp_secret: ${{secrets.ES_TOTP_SECRET}}
           file_path: ./test/src/build/HelloWorld.jar
+          output_path: ./artifacts
           malware_block: false
           environment_name: PROD
           override: true
@@ -68,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Sign with External Repo
     steps:
-      - uses: sslcom/actions-codesigner@develop
+      - uses: ./
         with:
           command: sign
           username: ${{ secrets.ES_USERNAME }}
