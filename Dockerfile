@@ -10,7 +10,7 @@ RUN apt update && apt dist-upgrade -y && apt install -y unzip vim wget curl
 ADD --chown=root:root CodeSignTool-v1.2.7.zip /tmp/CodeSignTool-v1.2.7.zip
 
 # Install CodeSignTool
-RUN unzip "/tmp/CodeSignTool-v1.2.7.zip" -d "/tmp/CodeSignTool-v1.2.7" && mv "/tmp/CodeSignTool-v1.2.7" "/codesign" && \
+RUN unzip "/tmp/CodeSignTool-v1.2.7.zip" -d "/tmp" && mv "/tmp/CodeSignTool-v1.2.7" "/codesign" && \
     chmod +x "/codesign/CodeSignTool.sh" && ln -s "/codesign/CodeSignTool.sh" "/usr/bin/codesign"
 
 # # Added CodeSignTool Setup
