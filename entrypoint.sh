@@ -32,6 +32,7 @@ COMMON_FLAGS=""
 
 # Check and create OUTPUT_PATH if not exists
 if [ ! -d "$INPUT_OUTPUT_PATH" ]; then
+    echo "Directory does not exist, creating director: ${INPUT_OUTPUT_PATH}"
     mkdir -p "$INPUT_OUTPUT_PATH"
 fi
 
