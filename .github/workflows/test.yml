@@ -123,7 +123,7 @@ jobs:
 
       - uses: ./
         with:
-          command: batch_sign
+          command: sign
           username: ${{ secrets.ES_USERNAME }}
           password: ${{ secrets.ES_PASSWORD }}
           credential_id: ${{ secrets.CREDENTIAL_ID }}
