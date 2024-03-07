@@ -22,8 +22,12 @@ COMMAND="/usr/bin/codesign"
 [ ! -z $INPUT_FILE_PATH ] && COMMAND="${COMMAND} -input_file_path ${INPUT_FILE_PATH}"
 [ ! -z $INPUT_DIR_PATH ] && COMMAND="${COMMAND} -input_dir_path ${INPUT_DIR_PATH}"
 [ ! -z $INPUT_OUTPUT_PATH ] && COMMAND="${COMMAND} -output_dir_path ${INPUT_OUTPUT_PATH}"
-[ ! -z $INPUT_MALWARE_BLOCK ] && COMMAND="${COMMAND} -malware_block=${INPUT_MALWARE_BLOCK}"
-[ ! -z $INPUT_OVERRIDE ] && COMMAND="${COMMAND} -override=${INPUT_OVERRIDE}"
+
+# Only include MALWARE_BLOCK and OVERRIDE if INPUT_COMMAND is not batch_sign
+if [[ "$INPUT_COMMAND" != "batch_sign" ]]; then
+    [ ! -z $INPUT_MALWARE_BLOCK ] && COMMAND="${COMMAND} -malware_block=${INPUT_MALWARE_BLOCK}"
+    [ ! -z $INPUT_OVERRIDE ] && COMMAND="${COMMAND} -override=${INPUT_OVERRIDE}"
+fi
 
 echo $COMMAND
 
