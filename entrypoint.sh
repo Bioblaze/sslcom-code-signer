@@ -11,36 +11,50 @@ if [[ "$INPUT_ENVIRONMENT_NAME" != "PROD" ]]; then
     cp /codesign/conf/code_sign_tool_demo.properties /codesign/conf/code_sign_tool.properties 
 fi
 
-COMMAND="/usr/bin/codesign"
+BASE_COMMAND="/usr/bin/codesign"
 
-[ ! -z $INPUT_COMMAND ] && COMMAND="$COMMAND $INPUT_COMMAND"
-[ ! -z $INPUT_USERNAME ] && COMMAND="$COMMAND -username $INPUT_USERNAME"
-[ ! -z $INPUT_PASSWORD ] && COMMAND="$COMMAND -password \"$INPUT_PASSWORD\""
-[ ! -z $INPUT_CREDENTIAL_ID ] && COMMAND="${COMMAND} -credential_id ${INPUT_CREDENTIAL_ID}"
-[ ! -z $INPUT_TOTP_SECRET ] && COMMAND="${COMMAND} -totp_secret \"${INPUT_TOTP_SECRET}\""
-[ ! -z $INPUT_PROGRAM_NAME ] && COMMAND="${COMMAND} -program_name ${INPUT_PROGRAM_NAME}"
-[ ! -z $INPUT_FILE_PATH ] && COMMAND="${COMMAND} -input_file_path ${INPUT_FILE_PATH}"
-[ ! -z $INPUT_DIR_PATH ] && COMMAND="${COMMAND} -input_dir_path ${INPUT_DIR_PATH}"
-[ ! -z $INPUT_OUTPUT_PATH ] && COMMAND="${COMMAND} -output_dir_path ${INPUT_OUTPUT_PATH}"
+# Common flags for all executions
+COMMON_FLAGS=""
+[ ! -z $INPUT_COMMAND ] && COMMON_FLAGS="$COMMON_FLAGS $INPUT_COMMAND"
+[ ! -z $INPUT_USERNAME ] && COMMON_FLAGS="$COMMON_FLAGS -username $INPUT_USERNAME"
+[ ! -z $INPUT_PASSWORD ] && COMMON_FLAGS="$COMMON_FLAGS -password \"$INPUT_PASSWORD\""
+[ ! -z $INPUT_CREDENTIAL_ID ] && COMMON_FLAGS="${COMMON_FLAGS} -credential_id ${INPUT_CREDENTIAL_ID}"
+[ ! -z $INPUT_TOTP_SECRET ] && COMMON_FLAGS="${COMMON_FLAGS} -totp_secret \"${INPUT_TOTP_SECRET}\""
+[ ! -z $INPUT_PROGRAM_NAME ] && COMMON_FLAGS="${COMMON_FLAGS} -program_name ${INPUT_PROGRAM_NAME}"
+[ ! -z $INPUT_OUTPUT_PATH ] && COMMON_FLAGS="${COMMON_FLAGS} -output_dir_path ${INPUT_OUTPUT_PATH}"
 
-# Only include MALWARE_BLOCK and OVERRIDE if INPUT_COMMAND is not batch_sign
-if [[ "$INPUT_COMMAND" != "batch_sign" ]]; then
-    [ ! -z $INPUT_MALWARE_BLOCK ] && COMMAND="${COMMAND} -malware_block=${INPUT_MALWARE_BLOCK}"
-    [ ! -z $INPUT_OVERRIDE ] && COMMAND="${COMMAND} -override=${INPUT_OVERRIDE}"
-fi
+# Conditional flags
+[ ! -z $INPUT_MALWARE_BLOCK ] && [ "$INPUT_COMMAND" != "batch_sign" ] && COMMON_FLAGS="${COMMON_FLAGS} -malware_block=${INPUT_MALWARE_BLOCK}"
+[ ! -z $INPUT_OVERRIDE ] && [ "$INPUT_COMMAND" != "batch_sign" ] && COMMON_FLAGS="${COMMON_FLAGS} -override=${INPUT_OVERRIDE}"
 
-echo $COMMAND
-
-RESULT=$(bash -c "set -e; $COMMAND 2>&1")
-
-if [[ "$RESULT" =~ .*"Error".* || "$RESULT" =~ .*"Exception".* || "$RESULT" =~ .*"Missing required option".* ||
-      "$RESULT" =~ .*"Unmatched arguments from".* ]]; then
-  echo "::error::Something Went Wrong. Please try again."
-  echo "::error::$RESULT"
-  exit 1
-else
-  echo "SELECTED_COLOR=green" >> $GITHUB_OUTPUT
-  echo "$RESULT"
+# Handling individual file signing if a directory is specified
+if [ ! -z $INPUT_DIR_PATH ] && [ -d "$INPUT_DIR_PATH" ]; then
+    for file in "$INPUT_DIR_PATH"/*; do
+        FILE_COMMAND="$BASE_COMMAND $COMMON_FLAGS -input_file_path \"$file\""
+        echo "Processing file: $file"
+        echo $FILE_COMMAND
+        FILE_RESULT=$(bash -c "set -e; $FILE_COMMAND 2>&1")
+        if [[ "$FILE_RESULT" =~ .*"Error".* || "$FILE_RESULT" =~ .*"Exception".* ]]; then
+            echo "::error::Something Went Wrong with file $file. Please try again."
+            echo "::error::$FILE_RESULT"
+            exit 1
+        else
+            echo "$FILE_RESULT"
+        fi
+    done
+elif [ ! -z $INPUT_FILE_PATH ]; then
+    # Single file processing
+    FINAL_COMMAND="$BASE_COMMAND $COMMON_FLAGS -input_file_path \"$INPUT_FILE_PATH\""
+    echo $FINAL_COMMAND
+    RESULT=$(bash -c "set -e; $FINAL_COMMAND 2>&1")
+    if [[ "$RESULT" =~ .*"Error".* || "$RESULT" =~ .*"Exception".* ]]; then
+        echo "::error::Something Went Wrong. Please try again."
+        echo "::error::$RESULT"
+        exit 1
+    else
+        echo "SELECTED_COLOR=green" >> $GITHUB_OUTPUT
+        echo "$RESULT"
+    fi
 fi
 
 if [[ "$INPUT_CLEAN_LOGS" == "true" || "$INPUT_CLEAN_LOGS" == true ]]; then
