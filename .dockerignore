@@ -1,7 +1,6 @@
 /test
 /artifacts
 /logs
-/codesign-tool
 /.github
 README.md
 action.yml
