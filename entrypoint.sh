@@ -57,7 +57,13 @@ if [ ! -z $INPUT_DIR_PATH ] && [ -d "$INPUT_DIR_PATH" ]; then
                 echo "$FILE_RESULT"
             fi
         else
-            echo "Skipping unsupported file type: $file"
+            echo "Unsupported file type, moving to output path: $file"
+            if [ ! -z "$INPUT_OUTPUT_PATH" ]; then
+                mv "$file" "$INPUT_OUTPUT_PATH/"
+                echo "Moved unsupported file to: $INPUT_OUTPUT_PATH"
+            else
+                echo "Skipping move because OUTPUT_PATH is not set."
+            fi
         fi
     done
 elif [ ! -z $INPUT_FILE_PATH ]; then
@@ -76,7 +82,13 @@ elif [ ! -z $INPUT_FILE_PATH ]; then
             echo "$RESULT"
         fi
     else
-        echo "Skipping unsupported file type: $INPUT_FILE_PATH"
+        echo "Unsupported file type, moving to output path: $INPUT_FILE_PATH"
+        if [ ! -z "$INPUT_OUTPUT_PATH" ]; then
+            mv "$INPUT_FILE_PATH" "$INPUT_OUTPUT_PATH/"
+            echo "Moved unsupported file to: $INPUT_OUTPUT_PATH"
+        else
+            echo "Skipping move because OUTPUT_PATH is not set."
+        fi
     fi
 fi
 
