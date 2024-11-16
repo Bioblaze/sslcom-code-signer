@@ -14,7 +14,7 @@ fi
 BASE_COMMAND="/usr/bin/codesign"
 
 # Supported file types
-SUPPORTED_FILE_TYPES="acm ax bin cab cpl dll drv efi exe mui ocx scr sys tsp msi ps1 ps1xml js vbs wsf jar"
+SUPPORTED_FILE_TYPES="acm ax bin cab cpl dll drv efi exe mui ocx scr sys tsp msi ps1 ps1xml js vbs wsf jar nupkg"
 
 # Common flags for all executions
 COMMON_FLAGS=""
